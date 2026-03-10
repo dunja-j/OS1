@@ -1,14 +1,4 @@
 #include "../lib/console.h"
-
-/*int main(){
-    int a = 10;
-    int b = 20;
-    int g = a - b;
-    g++;
-    __putc('a');
-    return 0;
-}*/
-
 #include "../h/MemoryAllocator.hpp"
 
 void printString(const char* str)
