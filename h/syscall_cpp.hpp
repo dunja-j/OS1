@@ -5,7 +5,7 @@
  
 class Thread { 
 public: 
-  Thread (void (*body)(void*), void* arg); 
+  Thread (thread_body_t body, void* arg); 
   virtual ~Thread (); 
  
   int start (); 

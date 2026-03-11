@@ -1,4 +1,5 @@
 #include "../h/syscall_c.hpp"
+#include "../h/MemoryAllocator.hpp"
 
 void *mem_alloc(size_t size)
 {
@@ -45,6 +46,7 @@ size_t mem_get_largest_free_block()
 
 int thread_create(thread_t *handle, thread_body_t start_routine, void *arg)
 {
+    void* stack = MemoryAllocator::mem_alloc(DEFAULT_STACK_SIZE);
     return 0;
 }
 

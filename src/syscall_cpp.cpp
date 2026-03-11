@@ -1,29 +1,36 @@
 #include "syscall_cpp.hpp"
 
-Thread::Thread(void (*body)(void *), void *arg)
+Thread::Thread(thread_body_t body, void *arg)
 {
+    this->body = body;
+    this->arg = arg;
 }
 
-Thread::~Thread()
+Thread::Thread()
 {
+    this->body = runWrapper;
+    this->arg = this;
 }
+
+Thread::~Thread() {}
 
 int Thread::start()
 {
-    return 0;
+    return thread_create(&myHandle, body, arg);
+}
+
+void Thread::runWrapper(void* arg) {
+    ((Thread*)arg)->run();
 }
 
 void Thread::dispatch()
 {
+    thread_dispatch();
 }
 
 int Thread::sleep(time_t)
 {
     return 0;
-}
-
-Thread::Thread()
-{
 }
 
 Semaphore::Semaphore(unsigned init)
