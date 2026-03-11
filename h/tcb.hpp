@@ -12,20 +12,21 @@ public:
     static thread_t running;
     static time_t time;
 
-    TCB(thread_body_t start_routine, void* arg, void* stack_space);
+    //TCB(thread_body_t start_routine, void* arg, void* stack_space);
     ~TCB() { delete[] stack; }
 
     bool finished = false;
-    bool waiting = false;
-    bool interrupted = false;
+    //bool waiting = false;
+    //bool interrupted = false;
+    bool blocked = false;
 
     static thread_t createThread();
 
-    static int exit();
+    //static int exit();
     static void dispatch();
 
 private:
-    TCB(Body body, uint64 timeSlice) :
+    /*TCB(Body body, uint64 timeSlice) :
             body(body),
             stack(body != nullptr ? new uint64[STACK_SIZE] : nullptr),
             context({(uint64) &threadWrapper,
@@ -35,6 +36,20 @@ private:
             finished(false)
     {
         if (body != nullptr) { Scheduler::put(this); }
+    }*/
+
+    TCB(thread_body_t start_routine, void* arg, void* stack_space):
+            start_routine(start_routine),
+            arg(arg),
+            stack(start_routine != nullptr? stack_space: nullptr),
+            context(
+                    {start_routine != nullptr? (uint64)&threadWrapper : 0,
+                    stack != nullptr? (uint64)stack + DEFAULT_STACK_SIZE : 0}
+            ),
+            blocked(false),
+            finished(false)
+            {
+        if(start_routine != nullptr) Scheduler::put(this);
     }
 
     struct Context
