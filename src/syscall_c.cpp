@@ -46,17 +46,33 @@ size_t mem_get_largest_free_block()
 
 int thread_create(thread_t *handle, thread_body_t start_routine, void *arg)
 {
-    void* stack = MemoryAllocator::mem_alloc(DEFAULT_STACK_SIZE);
-    return 0;
+    void* stack_space = mem_alloc(DEFAULT_STACK_SIZE);//ne znam dal direktno da zovem mem alokator proveri
+    __asm__ volatile("mv a4, %0" : : "r" (stack_space));
+    __asm__ volatile("mv a3, %0" : : "r" (arg));
+    __asm__ volatile("mv a2, %0" : : "r" (start_routine));
+    __asm__ volatile("mv a1, %0" : : "r" (handle));
+    __asm__ volatile("mv a0, %0" : : "r" (THREAD_CREATE));
+    __asm__ volatile("ecall");
+
+    uint64 ret;
+    __asm__ volatile("mv %0, a0" : "=r"(ret));
+    return (int)ret; //if the syscall was successful 0, 1 if unsuccessful
 }
 
 int thread_exit()
 {
-    return 0;
+    __asm__ volatile("mv a0, %0" : : "r" (THREAD_EXIT));
+    __asm__ volatile("ecall");
+
+    uint64 ret;
+    __asm__ volatile("mv %0, a0" : "=r" (ret));
+    return (int) ret;
 }
 
 void thread_dispatch()
 {
+    __asm__ volatile("mv a0, %0" : : "r" (THREAD_DISPATCH));
+    __asm__ volatile("ecall");
 }
 
 int sem_open(sem_t *handle, unsigned init)
