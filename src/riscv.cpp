@@ -30,14 +30,14 @@ void Riscv::handleSupervisorTrap() {
         switch (code) {
             case MEM_ALLOC: {
                 uint64 blocks;
-                __asm__ volatile("ld %0, 11*8(fp)" : "=r"(blocks)) //reading a1 for the argument
+                __asm__ volatile("ld %0, 11*8(fp)" : "=r"(blocks)); //reading a1 for the argument
                 void* addr = MemoryAllocator::mem_alloc(blocks);
                 __asm__ volatile("sd %0, 10*8(fp)" :: "r"(addr)); //storing the return value of the syscall in a0
                 break;
             }
             case MEM_FREE: {
                 uint64 addr;
-                __asm__ volatile("ld %0, 11*8(fp)" : "=r"(addr)) //reading a1 for the argument
+                __asm__ volatile("ld %0, 11*8(fp)" : "=r"(addr)); //reading a1 for the argument
                 int ret = MemoryAllocator::mem_free((void*)addr);
                 __asm__ volatile("sd %0, 10*8(fp)" :: "r"(ret)); //storing the return value of the syscall in a0
                 break;
@@ -52,33 +52,47 @@ void Riscv::handleSupervisorTrap() {
                 __asm__ volatile("sd %0, 10*8(fp)" :: "r"(largest)); //storing the return value of the syscall in a0
                 break;
             }
-            /*case THREAD_CREATE: {
-                uint64 handle = Riscv::r_user_reg(A1);
-                uint64 start_routine = Riscv::r_user_reg(A2);
-                uint64 arg = Riscv::r_user_reg(A3);
-                uint64 stack_space = Riscv::r_user_reg(A4);
+            case THREAD_CREATE: {
+                uint64 handle;
+                __asm__ volatile("ld %0, 11*8(fp)" : "=r"(handle)); //reading a1 for the argument
+                uint64 start_routine;
+                __asm__ volatile("ld %0, 12*8(fp)" : "=r"(start_routine));
+                uint64 arg;
+                __asm__ volatile("ld %0, 13*8(fp)" : "=r"(arg));
+                uint64 stack_space;
+                __asm__ volatile("ld %0, 14*8(fp)" : "=r"(stack_space));
 
-                if ((thread_t*) handle == nullptr || (thread_body_t) start_routine == nullptr || (void*) stack_space == nullptr) {
-                    Riscv::w_user_reg(A0, -1);
+
+                if ((thread_t*) handle == nullptr ||
+                    (thread_body_t) start_routine == nullptr ||
+                    (void*) stack_space == nullptr) { //exception
+                    __asm__ volatile("sd %0, 10*8(fp)" :: "r"((uint64)-1));//not sure if i should cast diff
                 }
-                else {
-                    thread_t thread = new _thread((thread_body_t) start_routine, (void*) arg, (void*) stack_space);
+                else { //all good
+                    /*thread_t thread = new TCB((thread_body_t) start_routine, (void*) arg, (void*) stack_space);
                     thread_t* t_handle = (thread_t*) handle;
                     *t_handle = thread;
-                    Riscv::w_user_reg(A0, 0);
+                    Riscv::w_user_reg(A0, 0);*/
+                    thread_t thread = TCB::createThread((thread_body_t) start_routine, (void*) arg, (void*) stack_space);
+                    thread_t* t_handle = (thread_t*) handle; //casting the handle to a pointer to a thread
+                    *t_handle = thread; //check this part pls, maybe dereferenced too many times
+                    __asm__ volatile("sd %0, 10*8(fp)" :: "r"((uint64)0));
                 }
                 break;
             }
             case THREAD_EXIT: {
-                int ret = _thread::exit();
-                Riscv::w_user_reg(A0, ret);
+                /*int ret = TCB::exit();
+                Riscv::w_user_reg(A0, ret);*/
+                TCB::running->finished = true; //put this in a separate exit function in TCB and call it
+                TCB::dispatch();
+                __asm__ volatile("sd %0, 10*8(fp)" :: "r"((uint64)0));
                 break;
             }
             case THREAD_DISPATCH: {
-                _thread::dispatch();
+                TCB::dispatch();
                 break;
             }
-            case SEM_OPEN: {
+            /*case SEM_OPEN: {
                 uint64 handle = Riscv::r_user_reg(A1);
                 uint64 init = Riscv::r_user_reg(A2);
 
