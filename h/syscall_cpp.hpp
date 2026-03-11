@@ -19,7 +19,10 @@ protected:
  
 private: 
   thread_t myHandle; 
-  void (*body)(void*); void* arg; 
+  thread_body_t body;
+  void* arg;
+
+  static void runWrapper(void* arg)
 }; 
  
  

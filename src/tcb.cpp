@@ -1,22 +1,19 @@
-//
-// Created by marko on 20.4.22..
-//
-
 #include "../h/tcb.hpp"
 #include "../h/riscv.hpp"
 
-TCB *TCB::running = nullptr;
+thread_t TCB::running = nullptr;
+time_t TCB::time = 0;
 
-uint64 TCB::timeSliceCounter = 0;
-
-TCB *TCB::createThread(Body body)
-{
-    return new TCB(body, TIME_SLICE);
+TCB::TCB(thread_body_t start_routine, void *arg, void *stack_space)
+: start_routine(start_routine), arg(arg), stack(stack_space) {
+    context.sp = (uint64) stack_space + DEFAULT_STACK_SIZE;
+    context.ra = (uint64) threadWrapper;
+    Scheduler::put(this); //do ovde sam stigla
 }
 
-void TCB::yield()
+TCB *TCB::createThread()
 {
-    __asm__ volatile ("ecall");
+    //return new TCB(body, TIME_SLICE);
 }
 
 void TCB::dispatch()

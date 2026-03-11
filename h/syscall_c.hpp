@@ -2,6 +2,7 @@
 #define OSPROJEKAT_SYSCALL_C_HPP
 
 #include "../lib/hw.h"
+#include "tcb.hpp"
 
 enum codes {
     MEM_ALLOC = 0x01, MEM_FREE, MEM_GET_FREE_SPACE, MEM_GET_LARGEST_FREE_BLOCK,
@@ -12,12 +13,12 @@ enum codes {
 };
 
 void* mem_alloc (size_t size);
-int mem_free (void* ptr);
+int mem_free (void*);
 size_t mem_get_free_space();
 size_t mem_get_largest_free_block();
 
-class _thread;
-typedef _thread* thread_t;
+//class _thread;
+typedef TCB* thread_t;
 typedef void (*thread_body_t) (void*);
 
 int thread_create (thread_t* handle, thread_body_t start_routine, void* arg);
@@ -33,10 +34,10 @@ int sem_wait (sem_t id);
 int sem_signal (sem_t id);
 
 typedef unsigned long time_t;
-int time_sleep (time_t period);
+int time_sleep (time_t);
 
 const int EOF = -1;
 char getc ();
-void putc (char c);
+void putc (char);
 
 #endif //OSPROJEKAT_SYSCALL_C_HPP
