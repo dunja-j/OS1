@@ -20,7 +20,7 @@ public:
     //bool interrupted = false;
     bool blocked = false;
 
-    static thread_t createThread();
+    static thread_t createThread(thread_body_t start_routine, void* arg, void* stack_space);
 
     //static int exit();
     static void dispatch();
