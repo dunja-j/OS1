@@ -9,6 +9,7 @@
 #include "../h/syscall_c.hpp"
 #include "../h/print.hpp"
 #include "../test/printing.hpp"
+#include "../h/Sem.hpp"
 
 void Riscv::popSppSpie()
 {
@@ -91,61 +92,63 @@ void Riscv::handleSupervisorTrap() {
                 TCB::dispatch();
                 break;
             }
-            /*case SEM_OPEN: {
-                uint64 handle = Riscv::r_user_reg(A1);
-                uint64 init = Riscv::r_user_reg(A2);
+            case SEM_OPEN: {
+                uint64 handle;
+                __asm__ volatile("ld %0, 11*8(fp)" : "=r"(handle)); //reading a1 for the argument
+                uint64 init;
+                __asm__ volatile("ld %0, 12*8(fp)" : "=r"(init));//reading a2 for the init value
 
-                if ((sem_t*) handle == nullptr) {
-                    Riscv::w_user_reg(A0, -1);
-                }
-                else {
-                    sem_t sem = new _sem((int) init);
-                    sem_t* s_handle = (sem_t*) handle;
-                    *s_handle = sem;
-                    Riscv::w_user_reg(A0, 0);
-                }
+                int ret = Sem::sem_open((Sem**)handle, init);
+
+                __asm__ volatile("sd %0, 10*8(fp)" :: "r"((uint64)ret));
                 break;
             }
             case SEM_CLOSE: {
-                uint64 handle = Riscv::r_user_reg(A1);
-
-                if ((sem_t) handle == nullptr) {
-                    Riscv::w_user_reg(A0, -1);
+                uint64 handle;
+                __asm__ volatile("ld %0, 11*8(fp)" : "=r"(handle)); //reading a1 for the argument
+                
+                int ret;
+                if (!(sem_t)handle) {
+                    ret = -1;
                 }
                 else {
-                    sem_t s_handle = (sem_t) handle;
-                    delete s_handle;
-                    Riscv::w_user_reg(A0, 0);
+                    Sem* s_handle = (Sem*)handle;
+                    ret = s_handle->sem_close();
                 }
+                __asm__ volatile("sd %0, 10*8(fp)" :: "r"((uint64)ret));
                 break;
             }
             case SEM_WAIT: {
-                uint64 handle = Riscv::r_user_reg(A1);
-
-                if ((sem_t) handle == nullptr) {
-                    Riscv::w_user_reg(A0, -1);
+                uint64 handle;
+                __asm__ volatile("ld %0, 11*8(fp)" : "=r"(handle)); //reading a1 for the argument
+                
+                int ret;
+                if (!(sem_t)handle) {
+                    ret = -1;
                 }
                 else {
-                    sem_t s_handle = (sem_t) handle;
-                    int ret = s_handle->wait();
-                    Riscv::w_user_reg(A0, ret);
+                    Sem* s_handle = (Sem*)handle;
+                    int ret = s_handle->sem_wait();
                 }
+                __asm__ volatile("sd %0, 10*8(fp)" :: "r"((uint64)ret));
                 break;
             }
             case SEM_SIGNAL: {
-                uint64 handle = Riscv::r_user_reg(A1);
+                uint64 handle;
+                __asm__ volatile("ld %0, 11*8(fp)" : "=r"(handle)); //reading a1 for the argument
 
-                if ((sem_t) handle == nullptr) {
-                    Riscv::w_user_reg(A0, -1);
+                int ret;
+                if(!(sem_t)handle) {
+                    ret = -1;
                 }
                 else {
-                    sem_t s_handle = (sem_t) handle;
-                    int ret = s_handle->signal();
-                    Riscv::w_user_reg(A0, ret);
+                    Sem* s_handle = (Sem*)handle;
+                    int ret = s_handle->sem_signal();
                 }
+                __asm__ volatile("sd %0, 10*8(fp)" :: "r"((uint64)ret));
                 break;
             }
-            case TIME_SLEEP: {
+            /*case TIME_SLEEP: {
                 uint64 period = Riscv::r_user_reg(A1);
                 Scheduler::Instance().putSleeping(_thread::running, period);
                 _thread::dispatch();
