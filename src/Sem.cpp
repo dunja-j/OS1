@@ -1,4 +1,4 @@
-#include "Sem.hpp"
+#include "../h/Sem.hpp"
 
 int Sem::sem_signal()
 {

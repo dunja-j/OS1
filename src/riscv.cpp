@@ -128,7 +128,7 @@ void Riscv::handleSupervisorTrap() {
                 }
                 else {
                     Sem* s_handle = (Sem*)handle;
-                    int ret = s_handle->sem_wait();
+                    ret = s_handle->sem_wait();
                 }
                 __asm__ volatile("sd %0, 10*8(fp)" :: "r"((uint64)ret));
                 break;
@@ -143,7 +143,7 @@ void Riscv::handleSupervisorTrap() {
                 }
                 else {
                     Sem* s_handle = (Sem*)handle;
-                    int ret = s_handle->sem_signal();
+                    ret = s_handle->sem_signal();
                 }
                 __asm__ volatile("sd %0, 10*8(fp)" :: "r"((uint64)ret));
                 break;
