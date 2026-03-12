@@ -56,20 +56,22 @@ int Thread::sleep(time_t)
 
 Semaphore::Semaphore(unsigned init)
 {
+    sem_open(&myHandle, init);
 }
 
 Semaphore::~Semaphore()
 {
+    sem_close(myHandle);
 }
 
 int Semaphore::wait()
 {
-    return 0;
+    return sem_wait(myHandle);
 }
 
 int Semaphore::signal()
 {
-    return 0;
+    return sem_signal(myHandle);
 }
 
 void PeriodicThread::terminate()
