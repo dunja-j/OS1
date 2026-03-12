@@ -1,7 +1,13 @@
 #include "../lib/console.h"
 #include "../h/MemoryAllocator.hpp"
+#include "../h/tcb.hpp"
+//#include "_new.cpp"
+#include "../h/syscall_cpp.hpp"
+#include "../h/riscv.hpp"
 
-void printString(const char* str)
+
+
+/*void printString(const char* str)
 {
     if (!str) return;
 
@@ -34,9 +40,38 @@ void printInt(size_t num)
 void printNewLine()
 {
     __putc('\n');
+}*/
+volatile bool mainFinished = false;
+
+extern void userMain();
+
+void userMainWrapper(void*) {
+    userMain();
+    mainFinished = true;
 }
 
-int main()
+
+int main() {
+    Riscv::w_stvec((uint64) Riscv::supervisorTrap);
+
+    TCB* userMainThread = nullptr;
+    TCB* myMainThread = nullptr;
+    //thread_create(&myMainThread, nullptr, nullptr);
+    myMainThread = TCB::createThread(nullptr, nullptr, nullptr);
+
+    TCB::running = myMainThread;
+
+    //thread_create(&userMainThread, userMainWrapper, nullptr);
+    userMainThread = TCB::createThread(userMainWrapper, nullptr, MemoryAllocator::mem_alloc(DEFAULT_STACK_SIZE));
+    while(!mainFinished) thread_dispatch();
+
+    delete userMainThread;
+    delete myMainThread;
+
+    return 0;
+}
+
+/*int main()
 {
     printString("===== Memory Allocator Test =====\n");
 
@@ -123,4 +158,4 @@ int main()
     printString("===== Test Finished =====\n");
 
     return 0;
-}
+}*/

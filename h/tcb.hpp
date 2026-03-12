@@ -4,6 +4,7 @@
 #include "../lib/hw.h"
 #include "scheduler.hpp"
 #include "../h/syscall_c.hpp"
+//#include "../src/_new.cpp"
 
 // Thread Control Block
 class TCB
@@ -13,7 +14,7 @@ public:
     static time_t time;
 
     //TCB(thread_body_t start_routine, void* arg, void* stack_space);
-    ~TCB() { delete[] stack; }
+    ~TCB() { uint64* uint64_stack = (uint64*)stack ; delete uint64_stack; }
 
     bool finished = false;
     //bool waiting = false;
@@ -37,6 +38,22 @@ private:
     {
         if (body != nullptr) { Scheduler::put(this); }
     }*/
+    
+    thread_body_t start_routine = nullptr;
+    void* arg = nullptr;
+    void* stack = nullptr;
+    struct Context
+    {
+        uint64 ra;
+        uint64 sp;
+    };
+    Context context;
+
+    friend class Riscv;
+
+    static void threadWrapper();
+
+    static void contextSwitch(Context *oldContext, Context *runningContext);
 
     TCB(thread_body_t start_routine, void* arg, void* stack_space):
             start_routine(start_routine),
@@ -45,29 +62,11 @@ private:
             context(
                     {start_routine != nullptr? (uint64)&threadWrapper : 0,
                     stack != nullptr? (uint64)stack + DEFAULT_STACK_SIZE : 0}
-            ),
-            blocked(false),
-            finished(false)
-            {
+            )
+    {
         if(start_routine != nullptr) Scheduler::put(this);
     }
 
-    struct Context
-    {
-        uint64 ra;
-        uint64 sp;
-    };
-
-    thread_body_t start_routine = nullptr;
-    void* arg = nullptr;
-    void* stack = nullptr;
-    Context context;
-
-    friend class Riscv;
-
-    static void threadWrapper();
-
-    static void contextSwitch(Context *oldContext, Context *runningContext);
 
 };
 

@@ -8,6 +8,7 @@
 #include "../h/MemoryAllocator.hpp"
 #include "../h/syscall_c.hpp"
 #include "../h/print.hpp"
+#include "../test/printing.hpp"
 
 void Riscv::popSppSpie()
 {
@@ -63,9 +64,7 @@ void Riscv::handleSupervisorTrap() {
                 __asm__ volatile("ld %0, 14*8(fp)" : "=r"(stack_space));
 
 
-                if ((thread_t*) handle == nullptr ||
-                    (thread_body_t) start_routine == nullptr ||
-                    (void*) stack_space == nullptr) { //exception
+                if ((thread_t*) handle == nullptr) { //exception
                     __asm__ volatile("sd %0, 10*8(fp)" :: "r"((uint64)-1));//not sure if i should cast diff
                 }
                 else { //all good
@@ -168,23 +167,23 @@ void Riscv::handleSupervisorTrap() {
             }
         }
     }
-    /*else if (scause == TIMER_INTERRUPT) {
-        mc_sip(SIP_SSIE);
-        _thread::time++;
+    else if (scause == TIMER_INTERRUPT) {
+        mc_sip(SIP_SSIP);
+        /*_thread::time++;
         Scheduler::Instance().updateSleeping();
         if (_thread::time >= DEFAULT_TIME_SLICE) {
             _thread::time = 0;
             _thread::dispatch();
-        }
-    }*/
-    else if (scause == CONSOLE_INTERRUPT) {
-        /*int irq = plic_claim();
-        if (irq == 10) {
-            _console::Instance().handler();
-            //console_handler();
-            plic_complete(irq);
         }*/
-       console_handler();
+    }
+    else if (scause == CONSOLE_INTERRUPT) {
+        // int irq = plic_claim();
+        // if (irq == 10) {
+            //_console::Instance().handler();
+        console_handler();
+        //     plic_complete(irq);
+        // }
+       
     }
     else {
         //force quit
@@ -195,9 +194,9 @@ void Riscv::handleSupervisorTrap() {
         */
        uint64 sepc = r_sepc();
         printString("Unhandled scause: ");
-        printInteger(scause);
+        printInt(scause);
         printString(", sepc: ");
-        printInteger(sepc);
+        printInt(sepc);
         while(1) {}
     }
 

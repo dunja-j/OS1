@@ -2,7 +2,9 @@
 #define OSPROJEKAT_SYSCALL_C_HPP
 
 #include "../lib/hw.h"
-#include "tcb.hpp"
+
+// Forward declaration to avoid circular dependency with tcb.hpp
+class TCB;
 
 enum codes {
     MEM_ALLOC = 0x01, MEM_FREE, MEM_GET_FREE_SPACE, MEM_GET_LARGEST_FREE_BLOCK,

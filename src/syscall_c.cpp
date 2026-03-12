@@ -102,9 +102,18 @@ int time_sleep(time_t period)
 
 char getc()
 {
-    return 0;
+    __asm__ volatile("mv a0, %0" : : "r" (GETC));
+    __asm__ volatile("ecall");
+
+    uint64 c;
+    __asm__ volatile("mv %0, a0" : "=r" (c));
+    return (char)c;    
+
 }
 
 void putc(char c)
 {
+    __asm__ volatile("mv a1, %0" : : "r" (c));
+    __asm__ volatile("mv a0, %0" : : "r" (PUTC));
+    __asm__ volatile("ecall");
 }

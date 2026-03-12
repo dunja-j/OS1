@@ -1,7 +1,10 @@
 #ifndef _syscall_cpp 
 #define _syscall_cpp 
  
-#include "syscall_c.hpp"
+#include "../h/syscall_c.hpp"
+
+void* operator new(size_t n);
+void operator delete(void *p) noexcept;
  
 class Thread { 
 public: 
@@ -22,7 +25,7 @@ private:
   thread_body_t body;
   void* arg;
 
-  static void runWrapper(void* arg)
+  static void runWrapper(void* arg);
 }; 
  
  
