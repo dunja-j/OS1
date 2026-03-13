@@ -1,5 +1,5 @@
-#ifndef OS1_VEZBE07_RISCV_CONTEXT_SWITCH_2_INTERRUPT_TCB_HPP
-#define OS1_VEZBE07_RISCV_CONTEXT_SWITCH_2_INTERRUPT_TCB_HPP
+#ifndef OS1_TCB_HPP
+#define OS1_TCB_HPP
 
 #include "../lib/hw.h"
 #include "scheduler.hpp"

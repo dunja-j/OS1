@@ -1,5 +1,5 @@
-#ifndef OSPROJEKAT_SEMAPHORE_HPP
-#define OSPROJEKAT_SEMAPHORE_HPP
+#ifndef OS1_SEM_HPP
+#define OS1_SEM_HPP
 
 #include "tcb.hpp"
 #include "list.hpp"

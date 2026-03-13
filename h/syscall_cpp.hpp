@@ -1,5 +1,5 @@
-#ifndef _syscall_cpp 
-#define _syscall_cpp 
+#ifndef OS1_SYSCALL_CPP_HPP
+#define OS1_SYSCALL_CPP_HPP
  
 #include "../h/syscall_c.hpp"
 

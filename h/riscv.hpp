@@ -1,9 +1,5 @@
-//
-// Created by marko on 20.4.22..
-//
-
-#ifndef OS1_VEZBE07_RISCV_CONTEXT_SWITCH_2_INTERRUPT_RISCV_HPP
-#define OS1_VEZBE07_RISCV_CONTEXT_SWITCH_2_INTERRUPT_RISCV_HPP
+#ifndef OS1__RISCV_HPP
+#define OS1_RISCV_HPP
 
 #include "../lib/hw.h"
 

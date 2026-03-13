@@ -1,5 +1,5 @@
-#ifndef OSPROJEKAT_SYSCALL_C_HPP
-#define OSPROJEKAT_SYSCALL_C_HPP
+#ifndef OS1_SYSCALL_C_HPP
+#define OS1_SYSCALL_C_HPP
 
 #include "../lib/hw.h"
 

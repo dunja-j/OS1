@@ -7,7 +7,7 @@
 #include "../lib/console.h"
 #include "../h/MemoryAllocator.hpp"
 #include "../h/syscall_c.hpp"
-#include "../h/print.hpp"
+//#include "../h/print.hpp"
 #include "../test/printing.hpp"
 #include "../h/Sem.hpp"
 
