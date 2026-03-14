@@ -12,6 +12,9 @@ class TCB
 public:
     static thread_t running;
     static time_t time;
+    //------------------------------MODIFICATION-------------------------------------------
+    static uint64 nextID;
+    //--------------------------------------------------------------------------------------
 
     //TCB(thread_body_t start_routine, void* arg, void* stack_space);
     ~TCB() { uint64* uint64_stack = (uint64*)stack ; delete uint64_stack; }
@@ -25,6 +28,10 @@ public:
 
     //static int exit();
     static void dispatch();
+
+    //------------------------------MODIFICATION-------------------------------------------
+    uint64 getID();
+    //--------------------------------------------------------------------------------------
 
 private:
     /*TCB(Body body, uint64 timeSlice) :
@@ -48,7 +55,9 @@ private:
         uint64 sp;
     };
     Context context;
-
+    //------------------------------MODIFICATION-------------------------------------------
+    uint64 threadID = nextID++;
+    //--------------------------------------------------------------------------------------
     friend class Riscv;
 
     static void threadWrapper();

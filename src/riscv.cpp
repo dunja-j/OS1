@@ -92,6 +92,14 @@ void Riscv::handleSupervisorTrap() {
                 TCB::dispatch();
                 break;
             }
+            //---------------------------MODIFICATION-----------------------------------
+            case THREAD_ID: {
+                uint64 id = TCB::running->getID();
+                TCB::dispatch();
+                __asm__ volatile("sd %0, 10*8(fp)" :: "r"(id));
+                break;
+            }
+            //-------------------------------------------------------------------------------
             case SEM_OPEN: {
                 uint64 handle;
                 __asm__ volatile("ld %0, 11*8(fp)" : "=r"(handle)); //reading a1 for the argument

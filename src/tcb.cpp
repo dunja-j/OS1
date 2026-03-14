@@ -1,8 +1,12 @@
 #include "../h/tcb.hpp"
 #include "../h/riscv.hpp"
+#include "tcb.hpp"
 
 thread_t TCB::running = nullptr;
 time_t TCB::time = 0;
+//-------------------------------MODIFICATION------------------------------------------
+uint64 TCB::nextID = 0;
+//--------------------------------------------------------------------------------------
 
 thread_t TCB::createThread(thread_body_t start_routine, void* arg, void* stack_space)
 {
@@ -16,7 +20,12 @@ void TCB::dispatch()
     running = Scheduler::get();
     TCB::contextSwitch(&old->context, &running->context);
 }
-
+//-------------------------------MODIFICATION----------------------------------------
+uint64 TCB::getID()
+{
+    return threadID;
+}
+//---------------------------------------------------------------------------------------
 void TCB::threadWrapper()
 {
     Riscv::popSppSpie();

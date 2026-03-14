@@ -13,7 +13,10 @@ public:
  
   int start (); 
  
-  static void dispatch (); 
+  static void dispatch ();
+  //---------------------------- MODIFICATION--------------------------------------------
+  static int getThreadId ();
+  //-----------------------------------------------------------------------------------
   static int sleep (time_t); 
  
 protected: 

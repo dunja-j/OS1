@@ -8,7 +8,7 @@ class TCB;
 
 enum codes {
     MEM_ALLOC = 0x01, MEM_FREE, MEM_GET_FREE_SPACE, MEM_GET_LARGEST_FREE_BLOCK,
-    THREAD_CREATE = 0x11, THREAD_EXIT, THREAD_DISPATCH,
+    THREAD_CREATE = 0x11, THREAD_EXIT, THREAD_DISPATCH, THREAD_ID,
     SEM_OPEN = 0x21, SEM_CLOSE, SEM_WAIT, SEM_SIGNAL,
     TIME_SLEEP = 0x31,
     GETC = 0x41, PUTC
@@ -26,6 +26,9 @@ typedef void (*thread_body_t) (void*);
 int thread_create (thread_t* handle, thread_body_t start_routine, void* arg);
 int thread_exit ();
 void thread_dispatch ();
+//-------------------------MODIFICATION--------------------------------------
+int getThreadId();
+//----------------------------------------------------------------------------
 
 class _sem;
 typedef _sem* sem_t;

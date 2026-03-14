@@ -1,5 +1,6 @@
 #include "../h/syscall_c.hpp"
 #include "../h/MemoryAllocator.hpp"
+#include "syscall_c.hpp"
 
 void *mem_alloc(size_t size)
 {
@@ -74,6 +75,17 @@ void thread_dispatch()
     __asm__ volatile("mv a0, %0" : : "r" (THREAD_DISPATCH));
     __asm__ volatile("ecall");
 }
+//---------------------MODIFICATION-------------------------------------
+int getThreadId()
+{
+    __asm__ volatile("mv a0, %0" : : "r" (THREAD_ID));
+    __asm__ volatile("ecall");
+
+    uint64 id;
+    __asm__ volatile("mv %0, a0" : "=r" (id));
+    return (int)id;
+}
+//-------------------------------------------------------------------------
 
 int sem_open(sem_t *handle, unsigned init)
 {

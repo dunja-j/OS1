@@ -1,4 +1,5 @@
 #include "../h/syscall_cpp.hpp"
+#include "syscall_cpp.hpp"
 //#include "../lib/mem.h"
 
 void* operator new (size_t n)
@@ -48,6 +49,13 @@ void Thread::dispatch()
 {
     thread_dispatch();
 }
+
+//------------------------------MODIFICATION--------------------------------------
+int Thread::getThreadId()
+{
+    return ::getThreadId();
+}
+//-----------------------------------------------------------------------------------
 
 int Thread::sleep(time_t)
 {
