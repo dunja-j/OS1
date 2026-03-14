@@ -1,6 +1,6 @@
 #include "../h/tcb.hpp"
 #include "../h/riscv.hpp"
-#include "tcb.hpp"
+#include "../h/tcb.hpp"
 
 thread_t TCB::running = nullptr;
 time_t TCB::time = 0;
