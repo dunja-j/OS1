@@ -4,49 +4,26 @@
 //#include "_new.cpp"
 #include "../h/syscall_cpp.hpp"
 #include "../h/riscv.hpp"
+#include "../test/printing.hpp"
 
 
-
-/*void printString(const char* str)
-{
-    if (!str) return;
-
-    while (*str != '\0') {
-        __putc(*str);
-        str++;
-    }
-}
-
-void printInt(size_t num)
-{
-    char buffer[20];
-    int i = 0;
-
-    if(num == 0){
-        __putc('0');
-        return;
-    }
-
-    while(num > 0){
-        buffer[i++] = '0' + (num % 10);
-        num /= 10;
-    }
-
-    while(i--){
-        __putc(buffer[i]);
-    }
-}
-
-void printNewLine()
-{
-    __putc('\n');
-}*/
 volatile bool mainFinished = false;
 
-extern void userMain();
+void userMainThreadID() {
+    printInt(getThreadId());
+    int i = 0;
+    while(i<10) {
+        printString("nit broj ");
+        printInt(getThreadId());
+        printString(", iteracija: ");
+        printInt(i);
+        printString("\n\n");
+        i++;
+    }
+}//test is showing that getthreadid successfully dispatches
 
 void userMainWrapper(void*) {
-    userMain();
+    userMainThreadID();
     mainFinished = true;
 }
 
@@ -63,7 +40,10 @@ int main() {
 
     //thread_create(&userMainThread, userMainWrapper, nullptr);
     userMainThread = TCB::createThread(userMainWrapper, nullptr, MemoryAllocator::mem_alloc(DEFAULT_STACK_SIZE));
-    while(!mainFinished) thread_dispatch();
+    while(!mainFinished) {
+        printString("main dobio kontrolu \n");
+        thread_dispatch();
+    }
 
     delete userMainThread;
     delete myMainThread;
